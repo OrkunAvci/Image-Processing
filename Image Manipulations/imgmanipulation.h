@@ -3,6 +3,7 @@
 #define __IMGMANIPULATION_H__
 
 #include "pgmmanager.h"	//	Includes pgmtype
+#include "filtertype.h"	//	
 
 void rotate_clockwise(PGM*);
 void rotate_anticlockwise(PGM*);
