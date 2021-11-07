@@ -8,7 +8,7 @@ int main()
 	PGM* pgm = read_pgm("D:\\GitHub\\Image Processing\\Read PGM\\LanaDelRey.pgm");
 
 	output_pgm(pgm);
-	//write_pgm(pgm);
+	write_pgm(pgm);
 
 	clean_up_pgm(pgm);
 	system("pause");
