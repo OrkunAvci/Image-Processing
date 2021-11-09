@@ -9,7 +9,7 @@ int main()
 {
 	PGM* pgm = read_pgm("D:\\GitHub\\Image Processing\\Read PGM\\LanaDelRey.pgm");
 
-	rotate_clockwise(pgm);
+	spatial_lowpass(pgm);
 
 	write_pgm(pgm);
 
