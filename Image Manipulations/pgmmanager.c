@@ -134,4 +134,6 @@ PGM* make_copy(PGM* original)
 			copy->data[i][j] = original->data[i][j];
 		}
 	}
+
+	return copy;
 }
