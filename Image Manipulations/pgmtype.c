@@ -16,6 +16,7 @@ PGM* create_pgm(const char* fileName)
 
 void delete_pgm(PGM* pgm)
 {
+	if (pgm == NULL)	{	return;		}
 	int i;
 	for (i = 0; i < pgm->height; free(pgm->data[i++]));
 	free(pgm->data);
