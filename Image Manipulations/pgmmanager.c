@@ -122,6 +122,8 @@ PGM* make_copy(PGM* original)
 	if (copy->file_name == NULL)	{	exit(1);	}
 	strncpy(copy->file_name, original->file_name, strlen(original->file_name));
 
+	strncpy(copy->type, original->type, strlen(original->type));
+
 	unsigned int i, j;
 	copy->data = calloc(copy->height, sizeof(unsigned char*));
 	if (copy->data == NULL)	{	exit(1);	}
