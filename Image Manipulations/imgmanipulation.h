@@ -12,8 +12,8 @@ void flip(PGM*);
 void mirror_x(PGM*);
 void mirror_y(PGM*);
 
-void spatial_lowpass(PGM*);
-void spatial_highpass(PGM*);
-void spatial_weigthed_pass(PGM*);
+PGM* spatial_lowpass(PGM*, unsigned int);
+PGM* spatial_highpass(PGM*);
+PGM* spatial_weigthed_pass(PGM*);
 
 #endif // !__IMGMANIPULATION_H__
