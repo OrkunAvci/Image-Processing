@@ -5,7 +5,7 @@ void verify_pgm_file(FILE* file)
 	char type[3] = { '\0' };
 	fscanf(file, "%s", type);
 	fseek(file, 0, SEEK_SET);
-	if (strncmp(type, "P5", 2))	{	exit(2);	}
+	if (strncmp(type, "P5", 2) && strncmp(type, "P2", 2))	{	exit(2);	}
 }
 
 void skip_comments(FILE* file)
@@ -26,12 +26,47 @@ void skip_comments(FILE* file)
 	}
 }
 
+void read_p2(PGM* pgm, FILE* file)
+{
+	pgm->data = calloc(pgm->height, sizeof(unsigned char*));
+	if (pgm->data == NULL) { return  NULL; }
+
+	unsigned int i, j;
+	int dummy;
+	for (i = 0; i < pgm->height; i++)
+	{
+		pgm->data[i] = calloc(pgm->width, sizeof(unsigned char));
+		if (pgm->data[i] == NULL) { return  NULL; }
+
+		for (j = 0; j < pgm->width; j++)
+		{
+			fscanf(file, "%d", &dummy);
+			pgm->data[i][j] = (unsigned char)dummy;
+		}
+	}
+}
+
+void read_p5(PGM* pgm, FILE* file)
+{
+	pgm->data = calloc(pgm->height, sizeof(unsigned char*));
+	if (pgm->data == NULL) { return  NULL; }
+
+	unsigned int i;
+	for (i = 0; i < pgm->height; i++)
+	{
+		pgm->data[i] = calloc(pgm->width, sizeof(unsigned char));
+		if (pgm->data[i] == NULL) { return  NULL; }
+
+		fread(pgm->data[i], sizeof(unsigned char), pgm->width, file);
+	}
+}
+
 PGM* read_pgm(const char* fileName)
 {
 	PGM* pgm = create_pgm(fileName);
 
 	FILE* file = fopen(pgm->file_name, "rb");
-	if (file == NULL)	{	exit(1);	}
+	if (file == NULL)	{	exit(1); }
 
 	verify_pgm_file(file);
 
@@ -45,36 +80,29 @@ PGM* read_pgm(const char* fileName)
 	fscanf(file, "%d", &(pgm->maxValue));
 	skip_comments(file);
 
-	pgm->data = calloc(pgm->height, sizeof(unsigned char*));
-	if (pgm->data == NULL)	{	return  NULL;	}
-
-	unsigned int i;
-	for (i = 0; i < pgm->height; i++)
-	{
-		pgm->data[i] = calloc(pgm->width, sizeof(unsigned char));
-		if (pgm->data[i] == NULL)	{	return  NULL;	}
-
-		fread(pgm->data[i], sizeof(unsigned char), pgm->width, file);
-	}
+	if	  (pgm->type[1] == '2')		{	read_p2(pgm, file);		}
+	else/*(pgm->type[1] == '5')*/	{	read_p5(pgm, file);		}
 
 	fclose(file);
 
 	return pgm;
 }
 
-void write_pgm(PGM* pgm)
+void write_p2(PGM* pgm, FILE* out)
 {
 	unsigned int i, j;
+	for (i = 0; i < pgm->height; i++)
+	{
+		for (j = 0; j < pgm->width; j++)
+		{
+			fprintf(out, "%d ", (int)pgm->data[i][j]);
+		}
+	}
+}
 
-	FILE* out = fopen("out.pgm", "w");
-	if (out == NULL)	{	exit(1);	}
-	fclose(out);
-
-	out = fopen("out.pgm", "ab");
-	fwrite(pgm->type, sizeof(char), 2, out);
-	fwrite("\n", sizeof(char), 1, out);
-	fprintf(out, "%u %u\n", pgm->height, pgm->width);
-	fprintf(out, "%u\n", (pgm->maxValue));
+void write_p5(PGM* pgm, FILE* out)
+{
+	unsigned int i, j;
 	for (i = 0; i < pgm->height; i++)
 	{
 		for (j = 0; j < pgm->width; j++)
@@ -82,6 +110,22 @@ void write_pgm(PGM* pgm)
 			fwrite(&(pgm->data[i][j]), sizeof(unsigned char), 1, out);
 		}
 	}
+}
+
+void write_pgm(PGM* pgm)
+{
+	FILE* out = fopen("out.pgm", "w");
+	if (out == NULL)	{	exit(1);	}
+	fclose(out);
+
+	out = fopen("out.pgm", "ab");
+	fwrite(pgm->type, sizeof(char), 2, out);
+	fwrite("\n", sizeof(char), 1, out);
+	fprintf(out, "%u %u\n", pgm->width, pgm->height);
+	fprintf(out, "%u\n", (pgm->maxValue));
+
+	if	  (pgm->type[1] == '2')		{	write_p2(pgm, out);		}
+	else/*(pgm->type[1] == '5')*/	{	write_p5(pgm, out);		}
 
 	fclose(out);
 }
