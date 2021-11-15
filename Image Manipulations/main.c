@@ -7,15 +7,15 @@
 
 int main()
 {
-	PGM* pgm = read_pgm("D:\\GitHub\\Image Processing\\Read PGM\\LanaDelRey.pgm");
+	PGM* pgm = read_pgm("D:\\GitHub\\Image Processing\\Read PGM\\dog.pgm");
 
-	PGM* output;
-	mirror_y(pgm);
+	PGM* output = spatial_lowpass(pgm, 5);
 
-	write_pgm(pgm);
+	output_pgm(output);
+	write_pgm(output);
 
 	clean_up_pgm(pgm);
-	//clean_up_pgm(output);
+	clean_up_pgm(output);
 
 	system("pause");
 	return 0;
